@@ -16,6 +16,10 @@ void setup() {
     input.reserve(200);
 }
 
+String execute(String request) {
+    return request;
+}
+
 void loop() {
     int len = input.length();
     unsigned char* buf = input.c_str();
@@ -27,17 +31,19 @@ void loop() {
             Serial.flush();
         } else if (opcode == 0x02) {
             if (len >= 5) {
-                size_t count = (((size_t)buf[1]) << 24) + (((size_t)buf[2]) << 16) + (((size_t)buf[3]) << 8) + buf[4];
-                if (len >= 5 + count) {
-                    String msg = input.substring(5, 5 + count);
+                size_t request_len = (((size_t)buf[1]) << 24) + (((size_t)buf[2]) << 16) + (((size_t)buf[3]) << 8) + buf[4];
+                if (len >= 5 + request_len) {
+                    String request = input.substring(5, 5 + request_len);
+                    String response = execute(request);
+                    size_t response_len = response.length();
                     Serial.write(0x02);
-                    Serial.write((count >> 24) & 0xFF);
-                    Serial.write((count >> 16) & 0xFF);
-                    Serial.write((count >> 8) & 0xFF);
-                    Serial.write((count >> 0) & 0xFF);
-                    Serial.print(msg);
+                    Serial.write((response_len >> 24) & 0xFF);
+                    Serial.write((response_len >> 16) & 0xFF);
+                    Serial.write((response_len >> 8) & 0xFF);
+                    Serial.write((response_len >> 0) & 0xFF);
+                    Serial.print(response);
                     Serial.flush();
-                    input = input.substring(5 + count);
+                    input = input.substring(5 + request_len);
                 }
             }
         } else {
