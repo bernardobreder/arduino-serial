@@ -1,12 +1,12 @@
 # Introdução
 
-O objetivo desse projeto é exercitar a comunicação de uma placa arduino com um processo C. Nesse projeto, foi criado uma biblioteca para exercitar essa comunicação
+O objetivo desse projeto é exercitar a comunicação de uma placa arduino com um processo C. Nesse projeto, foi criado uma biblioteca para exercitar essa comunicação. Como a comunicação entre o PC e o Arduino não é tão harmonica, um protocolo de comunicação foi criada para garantir a entrega correta do pacote e o recebimento pelo PC.
 
 # Biblioteca
 
-A biblioteca criada por esse projeto foi implementada em cima de um protocolo de comunicação tanto no processo C, quanto no código do arduino. Dessa forma, o arduino deve implementar o protocolo para que a biblioteca funcione corretamente, já que a comunicação Serail é muito precaria de confiabilidade de transmissão bi-direcional de dados.
+A biblioteca criada por esse projeto foi implementada em cima de um protocolo de comunicação tanto no PC, quanto no Arduino. Para isso, o Arduino deve possuir um código base para receber e tratar o comando, gerenciada por uma biblioteca que gerencia a comunicação bi-direcional dos dados.
 
-O código exemplo do arduino realizado nesse projeto de Echo é o seguinte:
+Um projeto base abaixo mostra no método `loop()` o recebimento da requisição vinda do PC e o tratamento da solicitação pelo método `execute(String)`.
 
 ```c++
 String input = "";
@@ -60,20 +60,20 @@ void serialEvent() {
 }
 ```
 
-Para iniciar a comunicação com o arduino, deve ser aberto a comunicação da seguinte forma:
+No PC, para iniciar a comunicação com o Arduino, deve ser aberto a comunicação da seguinte forma:
 
 ```c
 char *portname = "/dev/tty.usbmodem621";
 struct usbio_t* usb = usbio_open(alloca(sizeof(struct usbio_t)), portname, B9600);
 ``` 
 
-Para fechar a comunicação com o arduino, deve ser executado o comando de fechamento
+Para fechar a comunicação com o arduino, deve ser executado o comando abaixo:
 
 ```c
 usbio_close(usb);
 ``` 
 
-Para enviar uma mensagem e esperar pela resposta, execute o seguinte comando
+Para enviar uma mensagem e esperar pela resposta, deve ser executado o comando abaixo:
 
 ```c 
 char* resp = usbio_request(usb, "Echo...");
