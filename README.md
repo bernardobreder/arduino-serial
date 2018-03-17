@@ -66,3 +66,45 @@ Para fechar a comunicação com o arduino, deve ser executado o comando de fecha
 ```c
 usbio_close(usb);
 ``` 
+
+Para enviar uma mensagem e esperar pela resposta, execute o seguinte comando
+
+```c 
+char* resp = usbio_request(usb, "Echo...");
+if (resp) {
+    printf("Resp(%d): %s\n", n + 1, resp);
+    free(resp);
+}
+``` 
+
+Uma demo de programa C para execução de Echo
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "arduino-serial.h"
+
+int execute() {
+    char *portname = "/dev/tty.usbmodem621";
+    struct usbio_t* usb = usbio_open(alloca(sizeof(struct usbio_t)), portname, B9600);
+    printf("Opened\n");
+    int n; for (n = 0 ; n < 10 ; n++) {
+        char* resp = usbio_request(usb, "Bernardo Breder");
+        if (!resp) break;
+        printf("Resp(%d): %s\n", n + 1, resp);
+        free(resp);
+    }
+    usbio_close(usb);
+    printf("Closed\n");
+    return 0;
+}
+
+int main() {
+    setbuf(stdout, 0);
+    for (;;) {
+        execute();
+    }
+    return 0;
+}
+``` 
