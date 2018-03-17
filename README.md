@@ -8,12 +8,12 @@ A biblioteca criada por esse projeto foi implementada em cima de um protocolo de
 
 O código exemplo do arduino realizado nesse projeto de Echo é o seguinte:
 
-```arduino
+```c++
 String input = "";
 
 void setup() {
-Serial.begin(9600);
-input.reserve(200);
+    Serial.begin(9600);
+    input.reserve(200);
 }
 
 void loop() {
