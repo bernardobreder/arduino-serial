@@ -12,11 +12,7 @@
 #include <termios.h>
 #include <unistd.h>
 #include <fcntl.h>
-
-struct usbio_t {
-    int fd;
-    unsigned char closed;
-};
+#include "arduino-serial.h"
 
 static unsigned char* usbio_read_bytes(struct usbio_t* self, unsigned char* buffer, size_t length, useconds_t timeout) {
     if (self->closed) return 0;
@@ -148,27 +144,3 @@ char* usbio_request(struct usbio_t* self, const char* command) {
     if (usbio_write(self, command)) return 0;
     return usbio_read(self, 0);
 }
-
-int execute() {
-    char *portname = "/dev/tty.usbmodem621";
-    struct usbio_t* usb = usbio_open(alloca(sizeof(struct usbio_t)), portname, B9600);
-    printf("Opened\n");
-    int n; for (n = 0 ; n < 10 ; n++) {
-        char* resp = usbio_request(usb, "Bernardo Breder");
-        if (!resp) break;
-        printf("Resp(%d): %s\n", n + 1, resp);
-        free(resp);
-    }
-    usbio_close(usb);
-    printf("Closed\n");
-    return 0;
-}
-
-int main() {
-    setbuf(stdout, 0);
-    for (;;) {
-        execute();
-    }
-    return 0;
-}
-
